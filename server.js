@@ -3,7 +3,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { Pool } from 'pg';
 
-
 // Routes
 import authRoutes from './routes/auth.js';
 import songRoutes from './routes/songs.js';
@@ -12,48 +11,29 @@ import rehearsalRoutes from './routes/rehearsals.js';
 
 dotenv.config();
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
 // Database connection
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-});
-
-// Test DB connection
-pool.query('SELECT NOW()', (err) => {
-  if (err) {
-    console.error('Database connection failed:', err);
-  } else {
-    console.log('✓ Database connected');
-  }
+  ssl: { rejectUnauthorized: false },
 });
 
 const app = express();
 
 // Middleware
 app.use(cors({
-  origin: [
-    'https://band-app-frontend.vercel.app',
-    /\.vercel\.app$/
-  ],
+  origin: /\.vercel\.app$/,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
-
-// File upload functionality disabled for v1
-// Audio upload will be added in a future version
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/songs', songRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/rehearsals', rehearsalRoutes);
-
-// Audio uploads disabled for v1
 
 // Health check
 app.get('/health', (req, res) => {
@@ -70,3 +50,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🎸 Band app running on port ${PORT}`);
 });
+
+export default app;
