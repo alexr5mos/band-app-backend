@@ -7,17 +7,14 @@ const router = express.Router();
 // Get all songs
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query(`
-      SELECT 
-        s.id, s.title, s.genre, s.bpm, s.key, s.created_at, s.updated_at,
-        u.username as created_by,
-        COUNT(a.id) as audio_count
-      FROM songs s
-      LEFT JOIN users u ON s.created_by = u.id
-      LEFT JOIN audio_files a ON s.id = a.song_id
-      GROUP BY s.id, u.username
-      ORDER BY s.updated_at DESC
-    `);
+  const result = await pool.query(`
+  SELECT 
+    s.id, s.title, s.genre, s.bpm, s.key, s.created_at, s.updated_at,
+    u.username as created_by
+  FROM songs s
+  LEFT JOIN users u ON s.created_by = u.id
+  ORDER BY s.updated_at DESC
+`);
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -43,16 +40,11 @@ router.get('/:id', async (req, res) => {
       [req.params.id]
     );
 
-    const audioResult = await pool.query(
-      'SELECT id, file_name, file_path, uploaded_at, version_number, uploaded_by FROM audio_files WHERE song_id = $1 ORDER BY uploaded_at DESC',
-      [req.params.id]
-    );
-
-    res.json({
-      ...songResult.rows[0],
-      details: detailsResult.rows[0] || {},
-      audioFiles: audioResult.rows
-    });
+   res.json({
+  ...songResult.rows[0],
+  details: detailsResult.rows[0] || {},
+  audioFiles: []
+});
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
