@@ -36,8 +36,11 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: '*',
-  credentials: false,
+  origin: [
+    'https://band-app-frontend.vercel.app',
+    /\.vercel\.app$/
+  ],
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
