@@ -16,7 +16,8 @@ router.get('/', async (req, res) => {
   ORDER BY s.updated_at DESC
 `);
     res.json(result.rows);
-  } catch (err) {
+ } catch (err) {
+    console.error('Songs error:', err.message, err.stack);
     res.status(500).json({ error: err.message });
   }
 });
