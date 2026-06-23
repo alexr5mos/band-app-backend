@@ -7,6 +7,8 @@ import authRoutes from './routes/auth.js';
 import songRoutes from './routes/songs.js';
 import uploadRoutes from './routes/upload.js';
 import rehearsalRoutes from './routes/rehearsals.js';
+import recordingsRouter from './routes/recordings.js';
+
 
 dotenv.config();
 
@@ -39,6 +41,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/songs', songRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/rehearsals', rehearsalRoutes);
+app.use('/recordings', recordingsRouter);
 
 // Health check
 app.get('/health', (req, res) => {
